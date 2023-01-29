@@ -50,5 +50,19 @@
     hostname:
       name: xcat.cluster.com
       use: systemd
+  
+  - name: "create directory for xcat installer"
+    file:
+      path: /home/beshoy/xcat-installer
+      state: directory
+      owner: beshoy
+      group: beshoy
+      
+  - name: "download xcat installer"
+    uri:
+      url: https://raw.githubusercontent.com/xcat2/xcat-core/master/xCAT-server/share/xcat/tools/go-xcat
+      dest: /home/beshoy/xcat-installer/go-xcat
+      mode: '0740'
+
 
     

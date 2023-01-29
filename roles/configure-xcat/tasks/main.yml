@@ -1,0 +1,48 @@
+---
+
+  - name: "Fix AppStream repo "
+    become: true
+    lineinfile:
+      path: /etc/yum.repos.d/CentOS-Linux-AppStream.repo
+      regexp: '^mirrorlist='
+      line: "#mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=AppStream&infra=$infra"
+  - name: "Add Appstream rebo link"
+    become: true
+    lineinfile:
+      path: /etc/yum.repos.d/CentOS-Linux-AppStream.repo
+      regexp: '^#baseurl='
+      line: baseurl=http://mirror.marwan.ma/centos/8-stream/AppStream/x86_64/os/
+  - name: "Fix BaseOS repo "
+    become: true
+    lineinfile:
+      path: /etc/yum.repos.d/CentOS-Linux-BaseOS.repo
+      regexp: '^mirrorlist='
+      line: "#mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=BaseOS&infra=$infra"
+  - name: "Add BaseOS repo link"
+    become: true
+    lineinfile:
+      path: /etc/yum.repos.d/CentOS-Linux-BaseOS.repo
+      regexp: '^#baseurl='
+      line: baseurl=http://mirror.marwan.ma/centos/8-stream/BaseOS/x86_64/os/
+  - name: "Fix Extras repo "
+    become: true
+    lineinfile:
+      path: /etc/yum.repos.d/CentOS-Linux-Extras.repo
+      regexp: '^mirrorlist='
+      line: "#mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=extras&infra=$infra"
+  - name: "Add Extras repo link"
+    become: true
+    lineinfile:
+      path: /etc/yum.repos.d/CentOS-Linux-Extras.repo
+      regexp: '^#baseurl='
+      line: baseurl=http://mirror.marwan.ma/centos/8-stream/extras/x86_64/os/
+
+  - name: "install xcat dependancies"
+    become: true
+    yum:
+      name:
+        - gcc
+        - make
+      state: present
+
+    

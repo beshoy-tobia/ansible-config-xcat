@@ -44,5 +44,11 @@
         - gcc
         - make
       state: present
+    
+  - name: "Set hostname"
+    become: true
+    hostname:
+      name: xcat.cluster.com
+      use: systemd
 
     

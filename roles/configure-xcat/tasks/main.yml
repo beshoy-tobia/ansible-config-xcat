@@ -57,12 +57,30 @@
       state: directory
       owner: beshoy
       group: beshoy
+  
+  - name: "check if xcat is installed"
+    stat:
+      path: /home/beshoy/xcat-installer/go-xcat
+    register: installer_check
       
   - name: "download xcat installer"
     uri:
       url: https://raw.githubusercontent.com/xcat2/xcat-core/master/xCAT-server/share/xcat/tools/go-xcat
       dest: /home/beshoy/xcat-installer/go-xcat
       mode: '0740'
+    when: not installer_check.stat.exists
+
+  - name: "check if xcat is installed"
+    stat:
+      path: /etc/xcat
+    register: check_result
+  - debug: msg={{check_result}}
+
+  - name: "install xCAT"
+    shell: /home/beshoy/xcat-installer/go-xcat install
+    when: not check_result.stat.exists
+
+  
 
 
     

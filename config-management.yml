@@ -10,4 +10,5 @@
     
 
     roles:
+      - install-xcat
       - configure-xcat

@@ -58,7 +58,7 @@
       owner: beshoy
       group: beshoy
   
-  - name: "check if xcat is installed"
+  - name: "check if xcat installer is downloaded"
     stat:
       path: /home/beshoy/xcat-installer/go-xcat
     register: installer_check
@@ -77,7 +77,8 @@
   - debug: msg={{check_result}}
 
   - name: "install xCAT"
-    shell: /home/beshoy/xcat-installer/go-xcat install
+    become: true
+    shell: /home/beshoy/xcat-installer/go-xcat install -y
     when: not check_result.stat.exists
 
   

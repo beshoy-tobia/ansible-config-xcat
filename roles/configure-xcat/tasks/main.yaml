@@ -1,0 +1,74 @@
+---
+
+  - name: "define xcat commands & variables"
+    shell: source /etc/profile.d/xcat.sh
+
+  - name: "set dns and master node IP on site table"
+    shell: |
+      chdef -t site master="192.168.57.3"
+      chdef -t site nameservers="192.168.57.3"
+      chdef -t site forwarders="8.8.8.8,192.168.57.3"
+  
+  - name: "set default password for root user for managed nodes"
+    shell: chtab key=system passwd.username=root passwd.password=aSdF@1234
+
+  - name: "delete records on network table"
+    shell: tabprune networks -a
+
+  - name: "define network on the network table"
+    shell: |
+      mkdef -t network -o net1 \
+      net=192.168.57.0 \
+      mask=255.255.255.0 \
+      mgtifname=enp0s8 \
+      gateway=192.168.57.1 \
+      dhcpserver=192.168.57.3 \
+      nameservers="<xcatmaster>" \
+      dynamicrange="192.168.57.4-192.168.57.100" \
+      mtu="1500"
+
+  - name: "copy OS ISO image to xcat management node"
+    copy:
+      src: CentOS-8.5.2111-x86_64-dvd1.iso
+      dest: /home/beshoy/
+
+  - name: "add ISO to xcat"
+    shell: | 
+      copycds /home/beshoy/CentOS-8.5.2111-x86_64-dvd1.iso
+      cp /install/centos8/x86_64/isolinux/ldlinux.c32 /tftpboot/
+      chdef -t osimage -o centos8-x86_64-install-compute template=
+
+  - name: "define frist node cn01"
+    shell: |
+      mkdef cn01 groups=all \
+      mac="08:00:27:25:80:33" \
+      netboot=pxe \
+      arch=x86_64 \
+      provmethod=centos8-x86_64-install-compute \
+      xcatmaster=xcat
+
+  - name: "set OS image for cn01"
+    shell: nodeset cn01 osimage=centos8-x86_64-install-compute
+
+  - name: "define second node cn02"
+    shell: |
+      mkdef cn02 groups=all \
+      mac="08:00:27:61:D4:07" \
+      netboot=pxe \
+      arch=x86_64 \
+      provmethod=centos8-x86_64-install-compute \
+      xcatmaster=xcat
+  
+  - name: "set OS image for cn02"
+    shell: nodeset cn02 osimage=centos8-x86_64-install-compute
+
+  - name: "configure DHCP & DNS services"
+    shell: |
+      makedhcp -n
+      makedns -n
+      makedns -a
+      makedhcp -a
+
+  - name: "configure NTP service"
+    shell: makentp -a
+
